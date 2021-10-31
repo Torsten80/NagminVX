@@ -1,2 +1,2 @@
 # NagminVX
-Shinken/Nagios ConfigurationAdministration Tool 
+Shinken/Nagios Configuration Administration Tool 
