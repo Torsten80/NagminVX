@@ -28,5 +28,10 @@ Advantages:
 - more stable due to the use of DB triggers
 - many program adjustments can be made in the database (in the program itself)
 
+
+Installation:
+
+you need : "codeigniter4/framework"
+
 more documentation will follow ...
 
