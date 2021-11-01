@@ -1547,9 +1547,10 @@ DELIMITER ;
 		 //	return;	 
  
 		// echo "<script type=\"text/javascript\"> $('#spinner').hide();</script>";	
-		echo "<script src= \"http://tortisoft17/assets/jquery/jquery-2.1.4.min.js\"></script>";	
-		echo "<script src=\"http://tortisoft17/assets/jquery/jquery.tablesorter.js\"></script>";
-		//echo "<script src='assets/jquery/jquery.tablesorter.js'></script>";
+		$bu=base_url();
+		echo "<script src=\"$bu/assets/jquery/jquery-2.1.4.min.js\"></script>";	
+		echo "<script src=\"$bu/assets/jquery/jquery.tablesorter.js\"></script>";
+		// echo "<script src='assets/jquery/jquery.tablesorter.js'></script>";
 		  echo"
 		  <SCRIPT Language=\"Javascript\">
 		  $(document).ready(function() {
