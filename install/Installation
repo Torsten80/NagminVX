@@ -1,0 +1,33 @@
+NagminVX Installation  DRAFT
+–––––––––––––––––––––
+
+0. prepare your testserver
+- php8
+- mysql or mariadb
+- http server
+
+
+
+1. Install CodeIgniter4 
+- please refer: https://codeigniter.com/user_guide/installation/index.html
+
+2. Import nagios and NagminVX datebases
+- nagios.sql
+- NagminVX.sql
+
+3. Install myth-auth
+- please refer: https://github.com/lonnieezell/myth-auth
+
+4. clone  https://github.com/Torsten80/NagminVX.git in your webserver root directory
+
+
+5. copy env to .env and modify
+
+6. adjust your Webserver configuration
+- please refer: https://codeigniter.com/user_guide/installation/index.html
+
+7. test
+
+8. customize your sudoers file
+
+9. test

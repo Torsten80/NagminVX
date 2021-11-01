@@ -1,0 +1,7 @@
+apache ALL=(ALL) NOPASSWD: /etc/init.d/shinken status
+apache ALL=(ALL) NOPASSWD: /etc/init.d/shinken start
+apache ALL=(ALL) NOPASSWD: /etc/init.d/shinken stop
+apache ALL=(ALL) NOPASSWD: /etc/init.d/shinken reload
+apache ALL=(ALL) NOPASSWD: /etc/init.d/shinken restart
+apache ALL=(ALL) NOPASSWD: /var/www/html/NagminVX4/writable/extra/NagminVX4_backup.sh
+apache ALL=(ALL) NOPASSWD: /var/www/html/NagminVX4/writable/extra/NagminVX4_cp_activate.sh
