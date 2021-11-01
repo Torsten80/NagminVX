@@ -1554,7 +1554,7 @@ DELIMITER ;
 		  <SCRIPT Language=\"Javascript\">
 		  $(document).ready(function() {
 				  $('#list').tablesort();
-		  }
+		  })
 				
 		  </SCRIPT>";
 		  
@@ -1612,14 +1612,12 @@ DELIMITER ;
 		echo "<tr class=$oddeven>";
 		  for($j=0;$j<$i;$j++){
 		   $myyx=$data[$k][$farray[$j]];
-
-			//		   echo "<td onclick=\"myaction('SNMP_Walker')\">$myyx </td>";
-			//		   echo "<td onclick=document.getElementById(check_command).value=TFTEST >$myyx </td>";
-			//	 echo "<td id=$myyx onclick=\"var aa=this.id; gett(aa);\">$myyx</td>";
 			if($j==0){
-		   	echo "<td id=$myyx>$myyx</td>";
+		   	 echo "<td id=$myyx>$myyx</td>";
+//			   	   echo "<td id=$myyx onclick=\"var aa=this.id; alert(aa); document.getElementById(\"check_command\").value=aa\">$myyx</td>";
+//			   	   echo "<td id=$myyx onclick=\"var aa=this.id; alert(aa);document.getElementById('check_command').value=aa\">$myyx</td>";
+//			   	   echo "<td id=$myyx onclick=\"$('#modal_form').modal({show:false});\">$myyx</td>";
 			} else echo "<td>$myyx</td>";
-			//		   echo "<td id=$myyx onclick=\"var aa=this.id; alert(aa); document.getElementById(\"check_command\").value=aa\">$myyx </td>";
 		  }
 	   echo "</tr>";
 	  }
