@@ -2,6 +2,11 @@
 NagminVX ChangeLog
 ########################
 
+20211128
+-----------------
+- If Myth:Auth is used, users can now change their password via „My Account“
+- default admin password is set (see installation instructions)
+
 
 20211031
 -----------------
