@@ -2,6 +2,12 @@
 NagminVX ChangeLog
 ########################
 
+20211218
+-----------------
+- If display if admin on „My Account“
+- test new reload table
+
+
 20211128
 -----------------
 - If Myth:Auth is used, users can now change their password via „My Account“
