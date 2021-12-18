@@ -1220,12 +1220,11 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 
 
 	  
-	   public function myaccount()
-	   {
+  public function myaccount()	   {
 		   
 		   
-		$session = session();		
-		$user=$_SESSION['uname'];
+	$session = session();		
+	$user=$_SESSION['uname'];
 	if(!$session->has('uname')){
 		log_message('debug',"auf uname kann nicht zugegriffen werden!");
 		$_SESSION['uname']="unbekannt";
@@ -1233,56 +1232,50 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 	}
 
 
-
-
 	$ll=logged_in();
 
 if(!$ll){  // hier sollte der Benutzer ein AD user sein
 
-
-	
 	echo "Login = $user<p>";
 	echo "ist Administrator = ????? zu klären<p>";
-
 //include '/var/www/html/NagminVX4/public/assets/tortisoft/ldap.inc';
    include 'assets/tortisoft/ldap.inc';
 
 
-  $ul= strtolower($user);
-  $sr=ldap_search($ds, "$context","cn=$ul" );
-  $info1 = ldap_get_entries($ds, $sr);
-  for ($i=0; $i<$info1["count"]; $i++) {	
+   $ul= strtolower($user);
+   $sr=ldap_search($ds, "$context","cn=$ul" );
+   $info1 = ldap_get_entries($ds, $sr);
+   for ($i=0; $i<$info1["count"]; $i++) {	
 
-    $xobjectsid    = bin2hex($info1[$i]["objectsid"][0]);
-    $xobjectclass    = $info1[$i]["objectclass"][3];
-    $xdisplayname    = $info1[$i]["displayname"][0];
-    $xdisplayname1    = $info1[$i]["department"][0];
-    $xgivenname      = $info1[$i]["givenname"][0];
-    $xsn             = $info1[$i]["sn"][0];
-    $xmail           = $info1[$i]["mail"][0];
-    $xtelephonenumber= $info1[$i]["telephonenumber"][0];
-    $xoffice	     = $info1[$i]["physicaldeliveryofficename"][0];
-    $xdescription    = $info1[$i]["description"][0];
-    $xpostalcode     = $info1[$i]["postalcode"][0];
-    $xfax            = $info1[$i]["facsimiletelephonenumber"][0];
-    $xcompany        = $info1[$i]["company"][0];
-    $xlocation       = $info1[$i]["l"][0];
-    $xloginname      = $info1[$i]["dn"];
-	echo "<table>
-	<tr><td>Displayname:</td><td>$xdisplayname</td></tr>
-	<tr><td>Displayname1:</td><td>$xdisplayname1</td></tr>
-	<tr><td>email:</td><td>$xmail</td></tr>
-	<tr><td>phone:</td><td>$xtelephonenumber</td></tr>
-	<tr><td>description:</td><td>$xdescription</td></tr>
-	<tr><td>office:</td><td>$xoffice</td></tr>
-	<table>
-	";
-}
- 
-
-
-
-}else{    
+     $xobjectsid    = bin2hex($info1[$i]["objectsid"][0]);
+     $xobjectclass    = $info1[$i]["objectclass"][3];
+     $xdisplayname    = $info1[$i]["displayname"][0];
+     $xdisplayname1    = $info1[$i]["department"][0];
+     $xgivenname      = $info1[$i]["givenname"][0];
+     $xsn             = $info1[$i]["sn"][0];
+     $xmail           = $info1[$i]["mail"][0];
+     $xtelephonenumber= $info1[$i]["telephonenumber"][0];
+     $xoffice	     = $info1[$i]["physicaldeliveryofficename"][0];
+     $xdescription    = $info1[$i]["description"][0];
+     $xpostalcode     = $info1[$i]["postalcode"][0];
+     $xfax            = $info1[$i]["facsimiletelephonenumber"][0];
+     $xcompany        = $info1[$i]["company"][0];
+     $xlocation       = $info1[$i]["l"][0];
+     $xloginname      = $info1[$i]["dn"];
+	 echo "<table>
+	 <tr><td>Displayname:</td><td>$xdisplayname</td></tr>
+	 <tr><td>Displayname1:</td><td>$xdisplayname1</td></tr>
+	 <tr><td>email:</td><td>$xmail</td></tr>
+	 <tr><td>phone:</td><td>$xtelephonenumber</td></tr>
+	 <tr><td>description:</td><td>$xdescription</td></tr>
+	 <tr><td>office:</td><td>$xoffice</td></tr>
+	 </table>
+	 ";
+	 if($isadmin==1) $iadmin="yes"; else $iadmin="no"; 
+	 echo "is admin:  $iadmin <br>";
+ }
+} 
+else{    
 		   
 		   
 	//	$ll=logged_in();
@@ -1294,24 +1287,46 @@ if(!$ll){  // hier sollte der Benutzer ein AD user sein
 		echo "user_id:  $uu<br>";
 //		->withGroup('guests') [created_at] => 2021-03-06 05:05:36 [updated_at] => 2021-03-06 05:05:36 
 		echo "user name :  $u1->username <br>";
+		$isadmin=$this->is_admin();
+		if($isadmin==1) $iadmin="yes"; else $iadmin="no"; 
+		echo "is admin:  $iadmin <br>";
 		echo "user email:  $u1->email <br>";
 		echo "created_at :  $u1->created_at <br>";
 		echo "updated_at:  $u1->updated_at <br>";
+//		echo "Token:  $u1->token <br>";
 		//print_r($u1);
 		echo "<br>";
 //		echo "in_groups:  $gg<br>";
 //		echo "has_permission:  $pp<br>";
-}		
-		}
+		$href = 'reset-password';
+
+echo "<a class=\"btn btn-secondary\"  id=\"btnStart\" title=\"reset password\" onclick=\"myaction('resetpassword')\"><i class=\"glyphicon glyphicon-remove\"></i>reset password</a>";
+	
+ }		
+}
   
-		public function get_username()
-		{
-		 
-		 $u1=user();
-		 return $u1->username;
-       }
+public function resetpassword()
+	{ 
+
+		$model = new Nagminvx4_Model();
+		$ndb = "";
+		$u1=user();
+		 echo "user email:  $u1->email <br>";
+		 $r_hash=password_hash($u1->email, PASSWORD_DEFAULT);
+		 $query = "update users set force_pass_reset=1, reset_hash='$r_hash' where email='$u1->email'";
+//		 log_message('debug',$query);
+		 $data = $model->get_query($ndb,$query);
+
+		return redirect('logout');
+
+}
  
- 
+ public function get_username()
+	 { 
+		  $u1=user();
+		  return $u1->username;
+	  }
+  
 
 	  public function ajax_add()
 	  {
