@@ -143,7 +143,11 @@ $.ajax( {
             mytest1()
 });
 
-
+$('#modal_form').on('hidden.bs.modal', function (e) {
+  // do something...
+  // alert("form ist nun versteckt");
+  reload_table();
+})
  
  // +++++++++++++++++++++++++++++++++++++++++++++
  

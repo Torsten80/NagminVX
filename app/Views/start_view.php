@@ -437,8 +437,13 @@ function myaction(mya){
       mya=mya+':0'
       x_table(mya);
       $('#spinner').hide();
-      return
-      
+      return     
+    break;
+    case "resetpassword":
+      var href = 'index.php/nagminvx4/'+mya, mya
+      $('#mcontent').load(href);      
+      $('#spinner').hide();
+      return    
     break;
    default:
     var myname = mya;
