@@ -2,6 +2,10 @@
 NagminVX ChangeLog
 ########################
 
+20220215
+-----------------
+- fix if you try duplicate more than one record
+
 20211218
 -----------------
 - If display if admin on „My Account“
