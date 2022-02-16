@@ -332,6 +332,11 @@ if(xx==0){
   return;
 }
 
+if(xx>1 && mymethod == 1){
+  alert("duplicate is only with one record possible!");
+  return;
+}
+
 tftext = '<form action="#" id="form1" name="form1" class="form-horizontal"><div class="form-body">'
 
 if(x==0){
