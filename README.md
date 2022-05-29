@@ -1,5 +1,6 @@
 # NagminVX
-Shinken/Nagios Configuration Administration Tool 
+Naemon/Nagios branch
+Configuration Administration Tool 
 This is a first test to put the sourcecode on github
 
 It's all incomplete at the moment.
