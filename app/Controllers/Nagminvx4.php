@@ -1,6 +1,6 @@
 <?php namespace App\Controllers;
-use CodeIgniter\Controller,
-Myth\Auth\auth;  //?????????????????????????????????????
+use CodeIgniter\Controller, Myth\Auth\auth; 
+ //?????????????????????????????????????
 use App\Models\Nagminvx4_model;
 use CodeIgniter\Events\Events;
 
@@ -835,8 +835,9 @@ if ( ! write_file(WRITEPATH."$nagdir/$table.cfg", "# NagMIN Configuration File (
 		$nagdir = getenv('nagdir');
 		$ini_array = parse_ini_file(WRITEPATH."$nagdir/config", true, INI_SCANNER_RAW);
 
-//		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","PollerTags");
-		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","Poller");
+//		//$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","PollerTags");
+		//$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","Poller");
+		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod");
 		
 		$teml_arry = array(); 
 		foreach ($nagios_tables as &$table) {
@@ -1030,7 +1031,7 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 		if($datax){
   //		echo nl2br($datax);
     		$datax =  nl2br($datax);
-		    echo "<small>$datax <small>";
+		    echo "<nobr><small>$datax <small>";
 		}else{
 			echo "<b> Error while executing: $mycmd";
 		}
@@ -1235,12 +1236,12 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 	$ll=logged_in();
 
 if(!$ll){  // hier sollte der Benutzer ein AD user sein
-
 	echo "Login = $user<p>";
-	echo "ist Administrator = ????? zu klären<p>";
-//include '/var/www/html/NagminVX4/public/assets/tortisoft/ldap.inc';
-   include 'assets/tortisoft/ldap.inc';
 
+    $isadmin=$this->is_admin();
+
+    if($isadmin==1) $iadmin="yes"; else $iadmin="no";
+    echo "is admin = $iadmin<p>";
 
    $ul= strtolower($user);
    $sr=ldap_search($ds, "$context","cn=$ul" );
@@ -1451,19 +1452,23 @@ DELIMITER ;
 			log_message('debug',"table====$table");
 
 			switch ($table) {
-				case 'Contact':
-					$query = "update ContactGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere ContactGroup is mir egal	
-					$data = $model->get_query($ndb,$query);
-					break;
+		//		case 'Contact':
+		//			$query = "update ContactGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere ContactGroup is mir egal	
+		//			$data = $model->get_query($ndb,$query);
+		//			break;
 				case 'Host':
-					$query = "Delete from Service where host_name=$val";	
-					$data = $model->get_query($ndb,$query);
+		//			$query = "Delete from Service where host_name=$val";	
+		//			$data = $model->get_query($ndb,$query);
 					
-					$query = "update Service set host_name=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(host_name,$val,''),',,',',')))  where FIND_IN_SET($val, host_name) and (LENGTH(host_name) - LENGTH(REPLACE(host_name, ',', '')))>0";	
-					$data = $model->get_query($ndb,$query);
+		//			$query = "update Service set host_name=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(host_name,$val,''),',,',',')))  where FIND_IN_SET($val, host_name) and (LENGTH(host_name) - LENGTH(REPLACE(host_name, ',', '')))>0";	
+		//			$data = $model->get_query($ndb,$query);
 										
-					$query = "update HostGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere HostGroup is mir egal	
+		//			$query = "update HostGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere HostGroup is mir egal	
+		//			$data = $model->get_query($ndb,$query);
+		// trigger on same tabel is not possible !!!!!!!!!!!!!!!!1
+					$query = "update Host set parents= TRIM(BOTH ',' FROM REPLACE( CONCAT(',',parents,','), CONCAT(',',$val,','), ',') )  where FIND_IN_SET($val, parents) "; // 	
 					$data = $model->get_query($ndb,$query);
+
 					break;
 				case 'xxxxx2':
 					echo "i ist gleich 2";
@@ -1510,6 +1515,12 @@ DELIMITER ;
 */
 //		log_message('debug',"ndata-------------------");
 //		log_message('debug',$ndata);
+		$myval=explode("=", $ndata);
+			  log_message('debug',"myval-------------------");
+			  log_message('debug',$myval[1]);
+        $this->x_delete($myval[1],$ttname[0]); //  trigger delete on same table ist not possible !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 		$ndata = str_replace("select+*+", "delete ", $ndata);
 		$ndata = str_replace("+", " ", $ndata);
 	
