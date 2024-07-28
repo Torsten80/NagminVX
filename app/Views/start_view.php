@@ -33,12 +33,7 @@
  
     
     
-    
-   
-
-
-
-<?php 
+  <?php 
  // https://getbootstrap.com/docs/3.3/components/
 
  $logininfo[0]="unknown";
@@ -222,6 +217,7 @@ if(usead===1){
 
 if(!uid){
  var href = 'login'
+ //var href = '/NagminVX4/public/login'
   window.location.replace(href);
   return
 }  
@@ -286,7 +282,7 @@ $.ajax({
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error get data from ajax');
+            alert('Error get data from ajax XXXXX');
         }
     });
 
@@ -392,6 +388,46 @@ function logo_delete(mya){
     });
 
 }
+
+
+
+function logo_upload(mya){
+  myname = 'logo_upload';
+  var mybase="<?php echo site_url('nagminvx4/')?>"
+  //alert(mybase)
+
+  const inputFile = document.getElementById("images");
+  images = '';
+
+    for (const file of inputFile.files) {
+       // formData.append("files", file);
+       console.log('--------------------');
+        console.log(file.name);
+        images = images + '|' + file.name;
+
+    }
+
+ 
+ 
+alert(images)
+  
+
+  $.ajax({
+  url : mybase+myname+'/'+images, images,
+            type: "POST",
+           success: function(response)
+        {
+          $('#mcontent').html(response);     
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
+
+}
+
+
 
 function myaction(mya){
 
