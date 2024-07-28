@@ -9,6 +9,8 @@ class Nagminvx4_model extends Model {
 		
 
 		function getmytables1($ndb){
+//			$ndb="nagios";
+                        if(!$ndb) $ndb= "default";
 			$db1 = db_connect($ndb);		
 			$tables = $db1->listTables();
 			return $tables;
@@ -17,6 +19,41 @@ class Nagminvx4_model extends Model {
 
 
 		function get_query($ndb,$query){
+			if(!$ndb) $ndb= "default";
+		    $db = db_connect($ndb);
+	//		log_message('debug',"o#########! $ndb !!#################");
+			try
+			{
+			$query=$db->Query("$query");
+			}
+			catch (\Exception $e)
+		   {
+			$myerror=$e->getMessage();	
+			return($myerror);
+		   }
+		
+
+			  $res = $query->getResultArray();
+		 
+			return $res;
+		}
+
+		function get_querySimple($ndb,$query){
+			if(!$ndb) $ndb= "default";
+		    $db = db_connect($ndb);
+
+                    if ($db->simpleQuery("$query")) {
+		     log_message('info', 'Success!');
+		     } else {
+			    log_message('info', 'Query failed!');
+	             }
+			return 1;
+		}
+
+		
+		function get_queryX($ndb,$query){
+		 if(!$ndb) $ndb= "default";
+
 		    $db = db_connect($ndb);
 
 			try
@@ -28,9 +65,10 @@ class Nagminvx4_model extends Model {
 			$myerror=$e->getMessage();	
 			return($myerror);
 		   }
+	//	log_message('debug',$query->getResult());
+		//	 $res = $query->getResultArray();
 		
-			$res = $query->getResultArray();
-			return $res;
+		//	return 1;
 		}
 	
 		function get_num_fields($ndb,$query){
@@ -45,13 +83,14 @@ class Nagminvx4_model extends Model {
 
 
 function getmytableheadpure($ndb,$x) {
+	if(!$ndb) $ndb= "default";
 	$db1 = db_connect($ndb);		
 	$query = $db1->getFieldNames($x);
 	return $query;
 }
 
 function getmytablepkey($ndb,$x) {
-
+        if(!$ndb) $ndb= "default";
 	$db1 = db_connect($ndb);		
 	$fields = $db1->getFieldData($x);
 	$pkey="";
@@ -77,7 +116,7 @@ function getmytablepkey($ndb,$x) {
 function myupdate($ndb,$tname,$data,$where)
  {
 
-	
+	if(!$ndb) $ndb= "default";
 	$db = db_connect($ndb);	
 	$builder = $db->table($tname);
 
@@ -101,6 +140,7 @@ function myupdate($ndb,$tname,$data,$where)
 	
  function myadd($ndb,$tname,$data)
  {
+ 	if(!$ndb) $ndb= "default";
 	$db = db_connect($ndb);	
 	$builder = $db->table($tname);
 
@@ -119,7 +159,7 @@ function myupdate($ndb,$tname,$data,$where)
 
  function mydelete($ndb,$ndata)
  {
-	
+	if(!$ndb) $ndb= "default";
 	$db = db_connect($ndb);	
 
 	try
