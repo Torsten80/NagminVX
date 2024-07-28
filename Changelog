@@ -1,6 +1,15 @@
 ########################
-NagminVX ChangeLog
+NagminVX4 ChangeLog
 ########################
+
+
+20240804
+---------
+- 	CI_VERSION 4.5.3
+- recommend: https://forum.codeigniter.com/showthread.php?tid=86130 
+\system\session\Session.php 
+l//$this->logger->info("Session: Class initialized using '" . $this->config->driver . "' driver.");
+
 
 20220215
 -----------------
