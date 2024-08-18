@@ -1,15 +1,20 @@
 ########################
-NagminVX ChangeLog
+NagminVX4 ChangeLog
 ########################
 
-20220215
------------------
-- fix if you try duplicate more than one record
+!!!!!!!!! Download now from NagminVX_CI_4.5.3 branch !!!!!!!!!
 
-20211218
------------------
-- If display if admin on „My Account“
-- test new reload table
+20240818
+---------
+- Configs Table: Tools ; Important! now using row action (not name) for to control what happens. As a side effect, the name can also contain spaces.
+as default action the table or view will displayed
+
+20240804
+---------
+- 	CI_VERSION 4.5.3
+- recommend: https://forum.codeigniter.com/showthread.php?tid=86130 
+\system\session\Session.php 
+l//$this->logger->info("Session: Class initialized using '" . $this->config->driver . "' driver.");
 
 
 20211128
@@ -21,4 +26,5 @@ NagminVX ChangeLog
 20211031
 -----------------
 - Help popup when clicking on labels; The associated table is displayed and can be sorted
+
 
