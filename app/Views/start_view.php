@@ -33,12 +33,7 @@
  
     
     
-    
-   
-
-
-
-<?php 
+  <?php 
  // https://getbootstrap.com/docs/3.3/components/
 
  $logininfo[0]="unknown";
@@ -222,6 +217,7 @@ if(usead===1){
 
 if(!uid){
  var href = 'login'
+ //var href = '/NagminVX4/public/login'
   window.location.replace(href);
   return
 }  
@@ -239,7 +235,7 @@ if(!uid){
          for(i=0;i<response.length;++i) {
        //   console.log("response i");
        //   console.log(response[i]);
-          $('#ntools').append("<a class='dropdown-item'     onclick=$('#spinner').show();myaction("+"'"+response[i].name+"'"+       ")>"+response[i].name+"</a>");
+          $('#ntools').append("<a class='dropdown-item'     onclick=$('#spinner').show();myaction("+"'"+response[i].action+"'"+       ")>"+response[i].name+"</a>");
          }
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -286,7 +282,7 @@ $.ajax({
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error get data from ajax');
+            alert('Error get data from ajax XXXXX');
         }
     });
 
@@ -393,8 +389,47 @@ function logo_delete(mya){
 
 }
 
-function myaction(mya){
 
+
+function logo_upload(mya){
+  myname = 'logo_upload';
+  var mybase="<?php echo site_url('nagminvx4/')?>"
+  //alert(mybase)
+
+  const inputFile = document.getElementById("images");
+  images = '';
+
+    for (const file of inputFile.files) {
+       // formData.append("files", file);
+       console.log('--------------------');
+        console.log(file.name);
+        images = images + '|' + file.name;
+
+    }
+
+ 
+ 
+alert(images)
+  
+
+  $.ajax({
+  url : mybase+myname+'/'+images, images,
+            type: "POST",
+           success: function(response)
+        {
+          $('#mcontent').html(response);     
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
+
+}
+
+
+
+function myaction(mya){
 
   switch(mya) {
     case "stop":
@@ -421,33 +456,23 @@ function myaction(mya){
     case "Logo_Manager":
     var myname = 'logos1';
     break;
-    case "SNMP_Walker":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return
-    break;
-    case "Interface_Scanner":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return
-    break;
-    case "Reports":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return     
-    break;
+   
     case "resetpassword":
       var href = 'index.php/nagminvx4/'+mya, mya
       $('#mcontent').load(href);      
       $('#spinner').hide();
       return    
     break;
-   default:
-    var myname = mya;
+   
+    default:
+    //var myname = mya;
+    mya=mya+':0'
+      x_table(mya);
+      $('#spinner').hide();
+      return     
+
 }
+
 
 var mybase="<?php echo site_url('nagminvx4/')?>"
 
