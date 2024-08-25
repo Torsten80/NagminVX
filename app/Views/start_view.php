@@ -465,12 +465,17 @@ function myaction(mya){
     break;
    
     default:
-    //var myname = mya;
-    mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return     
-
+      var myname = mya;
+      if(mya.indexOf(":")>1){
+      //        alert(mya)
+        myahelp = mya.split(":");
+        mya=myahelp[0];
+        mya=mya+':0'
+ alert(mya)
+        x_table(mya);
+        $('#spinner').hide();
+        return
+     }
 }
 
 
