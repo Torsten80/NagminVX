@@ -2,7 +2,7 @@
 namespace App\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
-
+use CodeIgniter\Database\Exceptions\DatabaseException;
 	
 
 class Nagminvx4_model extends Model {
