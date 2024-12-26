@@ -217,9 +217,10 @@ public function get_newform()
 	log_message('debug',$tname);
 	$ttname = explode(":", $tname);
 	$tname = $ttname[0];
+//$tname = substr($tname,1); // Änderung 24.12.2024 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
-	log_message('debug',$tname);
-	log_message('debug',"o##########################++++++++111");
+	log_message('info',$tname);
+	log_message('info',"o##########################++++++++111");
 
 	// $query="desc $tname ";
 	$mydefault="NagminVX";
@@ -236,7 +237,43 @@ public function get_newform()
 	echo json_encode($data);
 }
 
+public function ajax_check_NULL()    
 
+	{
+	
+		$model = new Nagminvx4_Model();
+ 
+		if ($this->request->isAJAX()) {
+			$x = service('request')->getPost('tname');
+			$tfield = service('request')->getPost('tfield');
+		}
+		$ttname = explode(":", $x);
+		$tname = $ttname[0];
+	//	$tname = substr($tname,1);
+		log_message('info',$tfield);
+		log_message('info',$x);
+		log_message('info',$tname);
+
+		$ndb="nagios";
+	// SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA="nagios" and TABLE_NAME="Host" and IS_NULLABLE="NO";
+	$query="SELECT count(TABLE_NAME) as mytest FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA='$ndb' and TABLE_NAME='$tname' and COLUMN_NAME='$tfield' and EXTRA<>'auto_increment' and IS_NULLABLE='NO'";
+	log_message('info',$query);
+	$data = $model->get_query($ndb,$query);
+
+//print_r($data);
+	
+//echo json_encode($tname);
+//echo ($data[0]['mytest']);
+$myreponse=$data[0]['mytest'];
+$myreponse=$tfield.":".$myreponse;
+echo ($myreponse);
+
+//echo json_encode($data);
+
+	//log_message('debug',$query);
+//		echo json_encode($query);
+
+	}
 
 
 public function get_mytable()
@@ -307,7 +344,7 @@ foreach ($list as $l) {
 $fcount++;
 $data[] = $row;
 }
-
+log_message('debug'," fertig -------------------$fcount");
 		$output = array(
 //			            "draw" => $_POST['draw'],
 //						"recordsTotal" => $tcount,
