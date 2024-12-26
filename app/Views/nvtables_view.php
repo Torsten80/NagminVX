@@ -172,7 +172,8 @@ $('#modal_form').on('hidden.bs.modal', function (e) {
             style: 'multi'
         },
     columns: columnsJSON,
-
+    deferRender: true,
+   
     "ajax": {
       url : "<?php echo site_url('nagminvx4/get_mytable')?>",
       type: "POST",
@@ -782,8 +783,6 @@ function save(myrepeat)
   
 
 
-    $('#btnSave').text('saving...'); //change button text
-    $('#btnSave').attr('disabled',true); //set button disable 
 
 
 
@@ -808,7 +807,8 @@ function save(myrepeat)
 
     var allfields = {};
     var oldfields = {};
-    
+
+   
 
     var oldvalues="";
     for (var i = 0, n = allElements.length; i < n; ++i) {
@@ -820,8 +820,38 @@ function save(myrepeat)
      // console.log(myclass);
      // console.log("myclassmmmmmmmmmmmmmmmmmmmmmmmmm");
        myfield = el.id
-       
+       var mynull=0
+      
        var myvalue=document.getElementById(el.id).value
+  
+       if(!myvalue && !myfield.startsWith("xold_")){
+        var check_url = "<?php echo site_url('nagminvx4/ajax_check_NULL')?>";    
+    $.ajax({
+        url : check_url,
+        type: "POST",
+        data: {tname:tname,tfield:myfield },
+     //    dataType: "JSON",
+        dataType: "text",
+        async : false,
+        success: function(data)
+        {
+         let myarray = data.split(":");
+         //   console.log(myarray[0]);
+         mynull=myarray[1]
+         if(myarray[1]==1 && myarray[0]!='id' ) {
+            alert(myarray[0] + "   darf nicht leer sein!")
+            return(1)
+           }
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert(jqXHR.responseText);
+        }
+    });
+   if(mynull==1) return // check if blank value in field
+  }  
+     
+  //     alert(myfield) 
   //     var myvalue=$('#'+el.id).val()
        if(myclass == "selectpicker") { 
         myvalue = $('#'+el.id).val()
@@ -854,7 +884,9 @@ function save(myrepeat)
       }
     }
 
-
+    $('#btnSave').text('saving...'); //change button text
+    $('#btnSave').attr('disabled',true); //set button disable 
+       
 
   // $('#modal_form').modal('hide');
 
