@@ -219,8 +219,8 @@ public function get_newform()
 	$tname = $ttname[0];
 //$tname = substr($tname,1); // Änderung 24.12.2024 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
-	log_message('info',$tname);
-	log_message('info',"o##########################++++++++111");
+//	log_message('info',$tname);
+//	log_message('info',"o##########################++++++++111");
 
 	// $query="desc $tname ";
 	$mydefault="NagminVX";
@@ -250,14 +250,12 @@ public function ajax_check_NULL()
 		$ttname = explode(":", $x);
 		$tname = $ttname[0];
 	//	$tname = substr($tname,1);
-		log_message('info',$tfield);
-		log_message('info',$x);
-		log_message('info',$tname);
 
-		$ndb="nagios";
+	//	$ndb="nagios";
+		$ndb = getenv('MyDB');
 	// SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA="nagios" and TABLE_NAME="Host" and IS_NULLABLE="NO";
 	$query="SELECT count(TABLE_NAME) as mytest FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA='$ndb' and TABLE_NAME='$tname' and COLUMN_NAME='$tfield' and EXTRA<>'auto_increment' and IS_NULLABLE='NO'";
-	log_message('info',$query);
+//	log_message('info',$query);
 	$data = $model->get_query($ndb,$query);
 
 //print_r($data);
@@ -398,7 +396,7 @@ log_message('debug'," fertig -------------------$fcount");
 		 $user=$u1->username;
 		}
 		 $adm =1;  ////????????????????????????????????????????????????????????????????????????????
-		log_message('info',"AAAAAAAAAAAAAAAAA: $user:  $adm ..... $ndb");
+	//	log_message('info',"AAAAAAAAAAAAAAAAA: $user:  $adm ..... $ndb");
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			if($adm==1 || $ndb){
 				$data = $model->getmytables1($ndb);
@@ -1157,7 +1155,7 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 			  if ($img->isValid() && ! $img->hasMoved())
 			  {
 			       $myName = $img->getName();
-			       log_message('info',"$dir, $myName");
+//			       log_message('info',"$dir, $myName");
 				   $img->move($dir, $myName);
 //				   $img->move("/tmp/", $myName);
 				   echo "<p>$myName";
@@ -1609,15 +1607,15 @@ DELIMITER ;
 //		log_message('debug',$ndata);
 		$myval=explode("=", $ndata);
 //			  log_message('info',"myval-------------------");
-			  log_message('info',$myval[1]);
-			  log_message('info',$ttname[0]);
+//			  log_message('info',$myval[1]);
+//			  log_message('info',$ttname[0]);
         $this->x_delete($myval[1],$ttname[0]); //  trigger delete on same table ist not possible !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 		$ndata = str_replace("select+*+", "delete ", $ndata);
 		$ndata = str_replace("+", " ", $ndata);
 	
-		log_message('info',$ndata);
+//		log_message('info',$ndata);
 		$model = new Nagminvx4_Model();
  
         $result = $model->mydelete($ndb,$ndata);
