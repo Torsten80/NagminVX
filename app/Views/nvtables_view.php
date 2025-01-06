@@ -516,8 +516,10 @@ if(save_method != "add") {
   //console.log(resx[1]);
   mytablex = resx[1].split(" ");
   // console.log(mytablex[1]+"// ??????????????????????????????????????????")
-
-  // console.log(mytable);
+  console.log(mytable);
+  mytable = mytable.toLowerCase()
+  mytable = mytable.replace(/distinct /g, "");
+   console.log(mytable);
   var res = mytable.split(" ");
 
 
@@ -525,38 +527,68 @@ if(save_method != "add") {
 //myquery="select * from "+res[res.length-1]+" where "+res[1].replace(',','')+"='"+myval+"'"
 myquery="select * from "+mytablex[1]+" where "+res[1].replace(',','')+"='"+myval+"'"
 
-// console.log("// myquery-------------------------")
+console.log("// myquery-------------------------")
 
-// console.log(myquery);
+console.log(myquery);
+var j=0;
+ 
 
- $.ajax( {
-                  url : "<?php echo site_url('nagminvx4/get_query')?>",
-                  type: "POST",
-                  dataType: "JSON",
-                  data: {ndb:'nagios',query:myquery},
-                  success: function(response)
-       	        {
-//                   console.log(response);
-                  for(i=0;i<response.length;++i) {
-//                    console.log( "response::::##############################::::::"+response[i]);
+$.ajax( {
+url : "<?php echo site_url('nagminvx4/get_query')?>",
+type: "POST",
+dataType: "JSON",
+data: {ndb:'nagios',query:myquery},
 
-                    for (const [key, value] of Object.entries(response[i])) {
-    
-                     if(key !== res[1] ){
-              
-                       if(document.getElementById(key)){
-                          document.getElementById(key).value=value
-                          console.log(key);
-                          console.log(value);
-                      }
-                     }
+success: function(response)
+ {
+  //                    console.log(response); //alert(response.length);
+  for(i=0;i<response.length;++i) {
+  //                    console.log("response::::##############################::::::"+response[i]);
+   for (const [key, value] of Object.entries(response[i])) {
+    if(key !== res[1] ){
+    //alert(response[i])
+     if(document.getElementById(key)){
+       var myclass =document.getElementById(key).className
+//                          console.log(myclass);
+       if(myclass=='selectpicker' ){
+          var xxxtest=document.getElementById(key)
+         // ++++++++++++++++++++ EXTRA
 
-                    }
+           if( j==0 && response.length > 1 ) {$(xxxtest).find("option").remove(); j++;}
+           var treffer=0
+           $(xxxtest).find('option').each(function() {
+            // console.log($(this).val());
+            if($(this).val()==value) treffer=1
+           });
 
-         
-                  }  
-  
-                }
+           if(treffer==0)  $(xxxtest).find("option").end().append('<option value ="'+ value + '">' + value + '</option>');
+           $(xxxtest).selectpicker('refresh');
+        // --------------------  EXTRA
+
+          if(value) myvalue = value.split(","); else myvalue = value;
+
+           $(xxxtest).selectpicker('val', myvalue);
+
+          if( response.length > 1)  $(xxxtest).selectpicker('val','');
+
+        }
+//------------------------------------------------------------------------------------------
+       else
+         document.getElementById(key).value=value
+//                          console.log(key);
+//                          console.log(value);
+
+    }
+
+  }
+
+}
+
+
+}
+
+
+}
 
 });
 
