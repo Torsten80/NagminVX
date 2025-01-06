@@ -235,7 +235,7 @@ if(!uid){
          for(i=0;i<response.length;++i) {
        //   console.log("response i");
        //   console.log(response[i]);
-          $('#ntools').append("<a class='dropdown-item'     onclick=$('#spinner').show();myaction("+"'"+response[i].name+"'"+       ")>"+response[i].name+"</a>");
+          $('#ntools').append("<a class='dropdown-item'     onclick=$('#spinner').show();myaction("+"'"+response[i].action+"'"+       ")>"+response[i].name+"</a>");
          }
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -391,6 +391,7 @@ function logo_delete(mya){
 
 
 
+
 function logo_upload(mya){
   myname = 'logo_upload';
   var mybase="<?php echo site_url('nagminvx4/')?>"
@@ -431,7 +432,6 @@ alert(images)
 
 function myaction(mya){
 
-
   switch(mya) {
     case "stop":
     var myname = 'saction';
@@ -457,33 +457,28 @@ function myaction(mya){
     case "Logo_Manager":
     var myname = 'logos1';
     break;
-    case "SNMP_Walker":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return
-    break;
-    case "Interface_Scanner":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return
-    break;
-    case "Reports":
-      mya=mya+':0'
-      x_table(mya);
-      $('#spinner').hide();
-      return     
-    break;
+   
     case "resetpassword":
       var href = 'index.php/nagminvx4/'+mya, mya
       $('#mcontent').load(href);      
       $('#spinner').hide();
       return    
     break;
-   default:
-    var myname = mya;
+   
+    default:
+      var myname = mya;
+      if(mya.indexOf(":")>1){
+      //        alert(mya)
+        myahelp = mya.split(":");
+        mya=myahelp[0];
+        mya=mya+':0'
+ alert(mya)
+        x_table(mya);
+        $('#spinner').hide();
+        return
+     }
 }
+
 
 var mybase="<?php echo site_url('nagminvx4/')?>"
 

@@ -1,8 +1,10 @@
 <?php namespace App\Controllers;
-use CodeIgniter\Controller,
-Myth\Auth\auth;  //?????????????????????????????????????
+use CodeIgniter\Controller, Myth\Auth\auth; 
+ //?????????????????????????????????????
 use App\Models\Nagminvx4_model;
 use CodeIgniter\Events\Events;
+
+use AllowDynamicProperties; 
 
 
 $session = session();
@@ -65,15 +67,28 @@ class Nagminvx4 extends \CodeIgniter\Controller
 	}	
 
 		public function nvtables()
-	{		 
-		$data['nvtable'] = $this->request->uri->getSegment(3);
+	{	
+		
+		if ($this->request->isAJAX()) {
+            // ...
+			//log_message('debug',"logged_in::::::::::::AJAX:::::::::::::::::::::::::::::::");
+			$spath = $this->request->getPath(); 
+			log_message('debug',"logged_in::::::::::::AJAX:::  $spath ::::::::::::::::::::::::::::");
+			$uri = $this->request->getUri();
+			$data['nvtable'] = $uri->getSegment(3);
+		}
+		
         echo view('nvtables_view', $data);
 	}
 	
 
 		public function nvfile()
 	{		 
-		$nvfilex = $this->request->uri->getSegment(3);
+	
+	
+        	 $uri = $this->request->getUri();
+
+		$nvfilex = $uri->getSegment(3);
 		$nvfile = explode(':',$nvfilex);
 
 		$myfile = getenv('nagdir');
@@ -120,6 +135,7 @@ class Nagminvx4 extends \CodeIgniter\Controller
 
 	public function get_mytables()
 	{
+		//echo json_encode(1);
 		$data = $this->nagminvx4->listcollections();
 		echo json_encode($data);
     }
@@ -127,20 +143,19 @@ class Nagminvx4 extends \CodeIgniter\Controller
 
 	public function get_query()
 	{
-	
 		if ($this->request->isAJAX()) {
 			$query = service('request')->getPost('query');
 			$ndb= service('request')->getPost('ndb');
 		}
 
-		
+	   
 
 		$model = new Nagminvx4_Model();
  
 		$data = $model->get_query($ndb,$query);
 	
 		echo json_encode($data);
-		
+
     }
 	
 
@@ -202,9 +217,10 @@ public function get_newform()
 	log_message('debug',$tname);
 	$ttname = explode(":", $tname);
 	$tname = $ttname[0];
+//$tname = substr($tname,1); // Änderung 24.12.2024 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
-	log_message('debug',$tname);
-	log_message('debug',"o##########################++++++++111");
+	log_message('info',$tname);
+	log_message('info',"o##########################++++++++111");
 
 	// $query="desc $tname ";
 	$mydefault="NagminVX";
@@ -221,7 +237,43 @@ public function get_newform()
 	echo json_encode($data);
 }
 
+public function ajax_check_NULL()    
 
+	{
+	
+		$model = new Nagminvx4_Model();
+ 
+		if ($this->request->isAJAX()) {
+			$x = service('request')->getPost('tname');
+			$tfield = service('request')->getPost('tfield');
+		}
+		$ttname = explode(":", $x);
+		$tname = $ttname[0];
+	//	$tname = substr($tname,1);
+		log_message('info',$tfield);
+		log_message('info',$x);
+		log_message('info',$tname);
+
+		$ndb="nagios";
+	// SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA="nagios" and TABLE_NAME="Host" and IS_NULLABLE="NO";
+	$query="SELECT count(TABLE_NAME) as mytest FROM INFORMATION_SCHEMA.COLUMNS  where TABLE_SCHEMA='$ndb' and TABLE_NAME='$tname' and COLUMN_NAME='$tfield' and EXTRA<>'auto_increment' and IS_NULLABLE='NO'";
+	log_message('info',$query);
+	$data = $model->get_query($ndb,$query);
+
+//print_r($data);
+	
+//echo json_encode($tname);
+//echo ($data[0]['mytest']);
+$myreponse=$data[0]['mytest'];
+$myreponse=$tfield.":".$myreponse;
+echo ($myreponse);
+
+//echo json_encode($data);
+
+	//log_message('debug',$query);
+//		echo json_encode($query);
+
+	}
 
 
 public function get_mytable()
@@ -282,7 +334,8 @@ foreach ($list as $l) {
   $xtext=str_replace("\n","%",$xtext); // ugly , but I need this workaround !!!!!!!!!!!!!!!!!!!!!!!!!!!
   $row[] = "<input type='checkbox'  id='checkbox'  value=$xtext >"; 
   foreach ($l as $key => $val) {  // Feldname passt; Flag = Treffer, nicht leer
-     $val  = str_replace(",", ", ", $val);
+//    if(str_contains((string)$val, ',')) {    $val  = str_replace(",", ", ", $val);}
+ $val  = str_replace(",", ", ", (string)$val);
 	 $row[] = $val;  
   }	
 
@@ -291,7 +344,7 @@ foreach ($list as $l) {
 $fcount++;
 $data[] = $row;
 }
-
+log_message('debug'," fertig -------------------$fcount");
 		$output = array(
 //			            "draw" => $_POST['draw'],
 //						"recordsTotal" => $tcount,
@@ -329,33 +382,33 @@ $data[] = $row;
 	 return($adm);
 	}
 
-	   public function get_mytables1()
+
+	public function get_mytables1()
 	{
-				
 		if ($this->request->isAJAX()) {
 			$ndb = service('request')->getPost('ndb');
 		}
 
-		$model = new Nagminvx4_Model();
+	
 
-		
+		$model = new Nagminvx4_Model();
 		$user=$_SESSION['uname'];
 		if(is_numeric ($user)){
 		 $u1=user();
 		 $user=$u1->username;
 		}
-		$admin=$this->get_mygroup($user);
-		$adm=$admin['group_id'];
+		 $adm =1;  ////????????????????????????????????????????????????????????????????????????????
+		log_message('info',"AAAAAAAAAAAAAAAAA: $user:  $adm ..... $ndb");
+		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			if($adm==1 || $ndb){
+				$data = $model->getmytables1($ndb);
+			   echo json_encode($data);
+			}	 else echo "1";
+			
+	}
 
 
-		log_message('info',"AAAAAAAAAAAAAAAAA: $user:  $adm");
- // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-     if($adm==1 || $ndb){
- 		$data = $model->getmytables1($ndb);
-		echo json_encode($data);
-	 }	 else echo json_encode(NULL);
- 	}
-	
+		
 
 
 	   public function get_mytablesimple()
@@ -602,8 +655,9 @@ public function dynamic_servicegroup_services()
 			foreach ($row as $key => $value){
 			 if($key=='service_templates') {
 
-				log_message('debug',"gefunden-------------------cccccccccccccc");
+				log_message('debug',"gefunden---------- $value  ---------cccccccccccccc");
   			   $ttempl=explode(",", $value);
+// 			   $ttempl=explode($value,",");
 			   for($k=0;$k<sizeof($ttempl);$k++){
 	// ******* Contact_groups ermitteln
 	//$data = $model->get_query($ndb,$query);	
@@ -611,9 +665,10 @@ public function dynamic_servicegroup_services()
 
 			   if($row['contact_groups']) $contactgroup=$row['contact_groups']; else $contactgroup=$defaultcontactgroup;
 	//## overwrite contact_groups if contact groups in Service_Template is set
-	    	   $query = "select contact_groups, service_description from `ServiceTemplate` where name='$ttempl[$k]'";
-			   $data1 = $model->get_query($ndb,$query);
-			   //$row1 = $data1->fetch_row();
+                 	    	   $query = "select contact_groups, service_description from `ServiceTemplate` where name='$ttempl[$k]'";
+		        	   $data1 = $model->get_query($ndb,$query);
+			           //$row1 = $data1->fetch_row();
+	                           log_message('debug',"xxxcontact_groups------  $query");
 			   if($data1[0]['contact_groups']) $contactgroup=$data1[0]['contact_groups'];
 	////////////////////////////////////////////////////////////////////////////
 				$query = "select service_description from Service where service_description='".$data1[0]['service_description']."' and (host_name like '%".$row['host_name'].",%' or host_name='".$row['host_name']."' or host_name like '%,".$row['host_name']."')";
@@ -724,7 +779,8 @@ $ndb = getenv('MyDB');
 
 $createtime=date(DATE_RFC822);
 
-if ( ! write_file(WRITEPATH."$nagdir/$table.cfg", "# NagMIN Configuration File ($nagdir/$table.cfg)\n# Generated $createtime \n"))
+
+if ( ! write_file(WRITEPATH."$nagdir/$table.cfg", "# NagminVX Configuration File ($nagdir/$table.cfg)\n# Generated $createtime \n # thruk: readonly\n"))
 {
 	echo 'Unable to write the file<p>';
 };
@@ -747,7 +803,7 @@ if ( ! write_file(WRITEPATH."$nagdir/$table.cfg", "# NagMIN Configuration File (
 
 		if ($ccmd == "contacttemplate") { $ccmd = "contact"; }
 		else if ($ccmd == "hosttemplate") { $ccmd = "host"; }
-		else if ($ccmd == "hostexttemplate") { $ccmd = "hostextinfo"; }
+	//	else if ($ccmd == "hostexttemplate") { $ccmd = "hostextinfon"; }
 		else if ($ccmd == "servicetemplate") { $ccmd = "service"; }
 		else if ($ccmd == "serviceexttemplate") { $ccmd = "serviceextinfo"; }
 
@@ -835,8 +891,10 @@ if ( ! write_file(WRITEPATH."$nagdir/$table.cfg", "# NagMIN Configuration File (
 		$nagdir = getenv('nagdir');
 		$ini_array = parse_ini_file(WRITEPATH."$nagdir/config", true, INI_SCANNER_RAW);
 
-//		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","PollerTags");
-		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","Poller");
+//		//$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","PollerTags");
+		//$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod","Poller");
+//		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostExtInfo","HostExtTemplate","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceExtInfo","ServiceExtTemplate","ServiceTemplate","TimePeriod");
+		$nagios_tables = array ("Command","Contact","ContactGroup","ContactTemplate","Host","HostDependency","HostEscalation","HostGroup","HostGroupEscalation","HostTemplate","Service","ServiceDependency","ServiceEscalation","ServiceTemplate","TimePeriod");
 		
 		$teml_arry = array(); 
 		foreach ($nagios_tables as &$table) {
@@ -1015,7 +1073,10 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 
 	  public function saction()
 	  {
-		$sa  = $this->request->uri->getSegment(3);
+	  
+        	$uri = $this->request->getUri();
+	  
+		$sa  = $uri->getSegment(3);
 		log_message('debug',"sa==== $sa");
 	
 		$query = "select action from Actions where name='$sa'";
@@ -1030,7 +1091,7 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 		if($datax){
   //		echo nl2br($datax);
     		$datax =  nl2br($datax);
-		    echo "<small>$datax <small>";
+		    echo "<nobr><small>$datax <small>";
 		}else{
 			echo "<b> Error while executing: $mycmd";
 		}
@@ -1057,11 +1118,22 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 		 $i++;
 		}
 			echo "</tr></table>"; 
-			echo "<form
+		//	echo "<form
 			
-			<form action='nagminvx4/logo_upload' name=\"formU\" id=\"formU\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">
-			<input type=\"file\" onchange=\"readURL(this);\" accept=\".png, .jpg, .jpeg, .gif\"  name=\"images[]\" multiple />";
-			echo "<button  type=\"submit\" class=\"btn btn-success\" ><i class=\"glyphicon glyphicon-upload\"></i> Upload</button></form>";
+			echo "<form action='index.php/nagminvx4/logo_upload' name=\"formU\" id=\"formU\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">
+			
+           
+			<input type=\"file\" accept=\".png, .jpg, .jpeg, .gif\"  name=\"images[]\" id=\"images\" multiple />";
+			echo "<button  type=\"submit\" class=\"btn btn-success\" ><i class=\"glyphicon glyphicon-upload\"></i> Upload</button>
+			</form>";
+			
+		
+	//	echo "	<button class=\"btn btn-success\" onclick=\"logo_upload('this TEST');\"><i class=\"glyphicon glyphicon-upload\"></i>Upload Test</button>";
+
+
+		
+		//	$data = $this->nagminvx4->get_query($ndb,$query);
+
 /*
 			echo "<form action='nagminvx4/logo_import' name=\"formI\" id=\"formI\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
 			echo "<button  type=\"submit\" class=\"btn btn-success\" ><i class=\"glyphicon glyphicon-upload\"></i> Import Names</button></form>";
@@ -1074,6 +1146,10 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 		$dir = getenv('icondir');
 
 		echo "<p>$dir<p>";
+	//	echo "<p>$images<p>";
+	//	$i=1
+	//	if($imagefile =explode('|',$images))
+
 		if($imagefile = $this->request->getFiles())
 		{
 		   foreach($imagefile['images'] as $img)
@@ -1081,7 +1157,9 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 			  if ($img->isValid() && ! $img->hasMoved())
 			  {
 			       $myName = $img->getName();
+			       log_message('info',"$dir, $myName");
 				   $img->move($dir, $myName);
+//				   $img->move("/tmp/", $myName);
 				   echo "<p>$myName";
 			  }
 		   }
@@ -1091,7 +1169,7 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 		//$this->logos1();
 		$bu=base_url();
 		echo "<p><a class=\"btn btn-secondary\" href=\"$bu\" id=\"btnStart\" title=\"start\" onclick=\"onclick=location.href='$bu'\"><i class=\"glyphicon glyphicon-step-backward\"></i> Back</a><p>";
-		$this->logo_import();
+     	$this->logo_import();
     //   return redirect()->to('/logos1');
 
 	  }
@@ -1103,17 +1181,23 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 	  {
 		$dir = getenv('icondir');
 		$model = new Nagminvx4_Model();
-		//$ndb = getenv('MyDB');
-		$ndb ="";
+		$ndb = getenv('');
+	//	$ndb = getenv('NagminVX');
+		
 		$query="truncate table  `LOGOS` ";
-		$data = $model->get_query($ndb,$query);
+
+		
+	
+//		log_message('info',$query);
+//		log_message('info',$ndb);
+		$data = $model->get_queryX($ndb,$query);
 	
 		foreach(glob("$dir/*.*") as $file) {
 			$file1=str_replace("$dir/",'',$file);
 			$query="INSERT INTO `LOGOS` (`name`) VALUES('$file1')";
 			echo "$ndb $query<p>";
 
-			$data = $model->get_query($ndb,$query);
+			$data =	 $model->get_queryX($ndb,$query);
 	   }
 	   $bu=base_url();
 	   return redirect()->to($bu);
@@ -1121,14 +1205,20 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 
 	  }
 
+
+
+	 
 	  public function logo_delete()
 	  {
 		$dir = getenv('icondir');
-		$file1  = $this->request->uri->getSegment(3);
-		$mycmd="rm $dir/$file1";
+		$uri = $this->request->getUri();
+
+		$file1  = $uri->getSegment(3);
+		$mycmd="rm -f $dir/$file1";
 		echo "<p>$mycmd<p>";
-		$data = shell_exec ("$mycmd");
-		echo nl2br($data);
+	//	$data = shell_exec ("$mycmd");
+                shell_exec ("$mycmd");
+	//	echo nl2br($data);
 		$bu=base_url();
 		echo "<p><a class=\"btn btn-secondary\" href=\"$bu\" id=\"btnStart\" title=\"start\" onclick=\"onclick=location.href='$bu'\"><i class=\"glyphicon glyphicon-step-backward\"></i> Back</a><p>";
 	
@@ -1235,13 +1325,13 @@ if (array_key_exists("nagiosservicegroups", $ini_array)) {
 	$ll=logged_in();
 
 if(!$ll){  // hier sollte der Benutzer ein AD user sein
-
 	echo "Login = $user<p>";
-	echo "ist Administrator = ????? zu klären<p>";
-//include '/var/www/html/NagminVX4/public/assets/tortisoft/ldap.inc';
+
+    $isadmin=$this->is_admin();
+
+    if($isadmin==1) $iadmin="yes"; else $iadmin="no";
+    echo "is admin = $iadmin<p>";
    include 'assets/tortisoft/ldap.inc';
-
-
    $ul= strtolower($user);
    $sr=ldap_search($ds, "$context","cn=$ul" );
    $info1 = ldap_get_entries($ds, $sr);
@@ -1258,7 +1348,7 @@ if(!$ll){  // hier sollte der Benutzer ein AD user sein
      $xoffice	     = $info1[$i]["physicaldeliveryofficename"][0];
      $xdescription    = $info1[$i]["description"][0];
      $xpostalcode     = $info1[$i]["postalcode"][0];
-     $xfax            = $info1[$i]["facsimiletelephonenumber"][0];
+  //   $xfax            = $info1[$i]["facsimiletelephonenumber"][0];
      $xcompany        = $info1[$i]["company"][0];
      $xlocation       = $info1[$i]["l"][0];
      $xloginname      = $info1[$i]["dn"];
@@ -1448,22 +1538,29 @@ DELIMITER ;
 
 			$table=trim($table.'\'');
 			$table=rtrim($table,'\'');
-			log_message('debug',"table====$table");
+			log_message('info',"table====$table");
 
 			switch ($table) {
-				case 'Contact':
-					$query = "update ContactGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere ContactGroup is mir egal	
-					$data = $model->get_query($ndb,$query);
-					break;
+		//		case 'Contact':
+		//			$query = "update ContactGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere ContactGroup is mir egal	
+		//			$data = $model->get_query($ndb,$query);
+		//			break;
 				case 'Host':
-					$query = "Delete from Service where host_name=$val";	
-					$data = $model->get_query($ndb,$query);
+		//			$query = "Delete from Service where host_name=$val";	
+		//			$data = $model->get_query($ndb,$query);
 					
-					$query = "update Service set host_name=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(host_name,$val,''),',,',',')))  where FIND_IN_SET($val, host_name) and (LENGTH(host_name) - LENGTH(REPLACE(host_name, ',', '')))>0";	
-					$data = $model->get_query($ndb,$query);
+		//			$query = "update Service set host_name=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(host_name,$val,''),',,',',')))  where FIND_IN_SET($val, host_name) and (LENGTH(host_name) - LENGTH(REPLACE(host_name, ',', '')))>0";	
+		//			$data = $model->get_query($ndb,$query);
 										
-					$query = "update HostGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere HostGroup is mir egal	
-					$data = $model->get_query($ndb,$query);
+		//			$query = "update HostGroup set members=TRIM(BOTH ',' FROM (SELECT REPLACE(REPLACE(members,$val,''),',,',',')))  where FIND_IN_SET($val, members) "; // leere HostGroup is mir egal	
+		//			$data = $model->get_query($ndb,$query);
+		// trigger on same tabel is not possible !!!!!!!!!!!!!!!!1
+					$query = "update Host set parents= TRIM(BOTH ',' FROM REPLACE( CONCAT(',',parents,','), CONCAT(',',$val,','), ',') )  where FIND_IN_SET($val, parents) "; // 	
+					log_message('info',"db====$ndb");
+                                        log_message('info',"query====$query");
+
+					$data = $model->get_querySimple($ndb,$query);
+
 					break;
 				case 'xxxxx2':
 					echo "i ist gleich 2";
@@ -1483,16 +1580,16 @@ DELIMITER ;
 		}
 
 
-//		log_message('debug',"ndata-------------------");
-//		log_message('debug',$ndata);
+//		log_message('info',"ndata-------------------");
+//		log_message('info',$ndata);
 
 		$ttname = explode(":", $tname);
 		$mydefault="NagminVX";
 		if($ttname[1][0]==1) $ndb = getenv('MyDB');
 		else $ndb="";
 
-//		log_message('debug',"tname-------------------");
-//		log_message('debug',$ttname[0]);
+//		log_message('info',"tname-------------------");
+//		log_message('info',$ttname[0]);
 
 	
 
@@ -1510,10 +1607,17 @@ DELIMITER ;
 */
 //		log_message('debug',"ndata-------------------");
 //		log_message('debug',$ndata);
+		$myval=explode("=", $ndata);
+//			  log_message('info',"myval-------------------");
+			  log_message('info',$myval[1]);
+			  log_message('info',$ttname[0]);
+        $this->x_delete($myval[1],$ttname[0]); //  trigger delete on same table ist not possible !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 		$ndata = str_replace("select+*+", "delete ", $ndata);
 		$ndata = str_replace("+", " ", $ndata);
 	
-//		log_message('debug',$ndata);
+		log_message('info',$ndata);
 		$model = new Nagminvx4_Model();
  
         $result = $model->mydelete($ndb,$ndata);
@@ -1556,7 +1660,9 @@ DELIMITER ;
 		 $model = new Nagminvx4_Model();
          $ndb = getenv('MyDB');
 		 //else $ndb="";
-		 $nfield = $this->request->uri->getSegment(3);
+		  $uri = $this->request->getUri();
+
+		 $nfield = $uri->getSegment(3);
 	
 		 log_message('debug',$nfield);
 		 //	return;	 

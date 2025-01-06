@@ -21,8 +21,10 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://tortisoft17/'; 
-	
+//	public $baseURL = 'http://tortisoft17/'; 
+	public $baseURL = 'http://localhost/NagminVX4/public/'; 
+public array $allowedHostnames = [];	
+//public $CI_DEBUG=true;
 	/*
 	|--------------------------------------------------------------------------
 	| Index File
@@ -226,7 +228,8 @@ class App extends BaseConfig
 	| Comma-separated:	'10.0.1.200,192.168.5.0/24'
 	| Array:		array('10.0.1.200', '192.168.5.0/24')
 	*/
-	public $proxyIPs = '';
+	// public $proxyIPs = '';
+	public array $proxyIPs = [];
 
 	/*
 	|--------------------------------------------------------------------------

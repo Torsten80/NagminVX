@@ -4,20 +4,6 @@ NagminVX4 ChangeLog
 
 !!!!!!!!! Download now from NagminVX_CI_4.5.3 branch !!!!!!!!!
 
-20250107
----------
-- tested with CI_VERSION 4.5.5
-- When saving, it is checked whether NULL has been encountered and, if necessary, the data set is prevented from being saved. 
-  You may need to adjust your table definitions.
-- the layering of templates has been revised (now works better)
-- distinct is in SQL statment (relations) allowed
-
-.. and again after CI update:
-https://forum.codeigniter.com/showthread.php?tid=86130
-./codeigniter4/framework/system/Session/Session.php Zeile 261\
-// $this->logger->info("Session: Class initialized using '" . $this->config->driver . "' driver.");
-
-
 20240818
 ---------
 - Configs Table: Tools ; Important! now using row action (not name) for to control what happens. As a side effect, the name can also contain spaces.
