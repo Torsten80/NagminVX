@@ -391,7 +391,6 @@ function logo_delete(mya){
 
 
 
-
 function logo_upload(mya){
   myname = 'logo_upload';
   var mybase="<?php echo site_url('nagminvx4/')?>"
