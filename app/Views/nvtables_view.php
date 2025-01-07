@@ -517,8 +517,12 @@ if(save_method != "add") {
   mytablex = resx[1].split(" ");
   // console.log(mytablex[1]+"// ??????????????????????????????????????????")
   console.log(mytable);
-  mytable = mytable.toLowerCase()
-  mytable = mytable.replace(/distinct /g, "");
+ 
+    var searchMask = "distinct ";
+    var regEx = new RegExp(searchMask, "ig");
+    var replaceMask = "";
+    mytable = mytable.replace(regEx, replaceMask);
+
    console.log(mytable);
   var res = mytable.split(" ");
 
